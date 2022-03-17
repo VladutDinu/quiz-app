@@ -1,8 +1,10 @@
 <script>
     export var qa;
+   
 </script>
 
 <main>
+
     {#await qa}
         ...loading
     {:then data} 

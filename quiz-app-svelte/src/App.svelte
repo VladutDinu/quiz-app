@@ -1,6 +1,11 @@
 <script>
   export let name;
   import WrongAnswers from "./WrongAnswers.svelte";
+  import { writable } from 'svelte/store';
+  import Modal, { bind } from 'svelte-simple-modal';
+  import Popup from './Popup.svelte';
+  const modal = writable(null);
+  const showModal = (arr_q, url) => modal.set(bind(Popup, { arr_q : arr_q, url : url }));
   const url="http://localhost:8081/"
   const q_a = async () => {
     const response = await fetch(url+"api/get_q");
@@ -9,7 +14,7 @@
   }
 
   var q_A = q_a();
-  let firstIncAnswer = "";
+
   let firstName = ""
   let lastName = ""
   let q1 = true;
@@ -25,27 +30,13 @@
 	xhr.send(JSON.stringify(qA));
   }
   const check_answers = () => {
-	firstIncAnswer = ""; 
+
     q1 = document.getElementById("1-option").checked;
     q2 = document.getElementById("22-option").checked;
     q3 = document.getElementById("444-option").checked;
     q4 = document.getElementById("2222-option").checked;
     q5 = document.getElementById("33333-option").checked;
-	if(!q1 && firstIncAnswer == ""){
-		firstIncAnswer = "q1"
-	}
-	if(!q2 && firstIncAnswer == ""){
-		firstIncAnswer = "q2"
-	}
-	if(!q3 && firstIncAnswer == ""){
-		firstIncAnswer = "q3"
-	}
-	if(!q4 && firstIncAnswer == ""){
-		firstIncAnswer = "q4"
-	}
-	if(!q5 && firstIncAnswer == ""){
-		firstIncAnswer = "q5"
-	}
+	
 	const qA={
 		q1: q1,
 		q2: q2,
@@ -61,6 +52,7 @@
 	//console.log(firstIncAnswer);
   console.log(qA);
   console.log(arr_q);
+  showModal(arr_q, url);
   };
   
  
@@ -140,11 +132,11 @@
           </li>
           {/each}
         </ul>
-      {#if !arr_q[i+1]}
+      <!-- {#if !arr_q[i+1]}
         <p class="incorrect">
           Raspunsul oferit nu este corect, va rugam sa revizuiti intrebarea.
         </p>
-      {/if}
+      {/if} -->
    </div>
     {/each}
   {:catch error}
@@ -153,10 +145,17 @@
 
   
   <button on:click={check_answers}>
-    <a href="#{firstIncAnswer}" class="buttons flatbutt orange">Submit quiz</a>
+    <!-- svelte-ignore a11y-invalid-attribute -->
+    <a href="#" class="buttons flatbutt orange">Submit quiz</a>
   </button>
-
-  <WrongAnswers bind:qa={q_A}></WrongAnswers>
+  <Modal
+  show={$modal}
+  styleBg={{ backgroundColor: 'rgba(255, 255, 255, 0.85)' }}
+  styleWindow={{ boxShadow: '0 2px 5px 0 rgba(0, 0, 0, 0.15)' }}
+>
+  <button on:click={showModal}>Show modal</button>
+</Modal>
+  <WrongAnswers bind:qa={q_A} ></WrongAnswers>
 </main>
 
 <style>
@@ -166,6 +165,7 @@
     max-width: 240px;
     margin: 0 auto;
     background-color: rgb(53, 53, 53);
+    font-family: 'Yeseva One', cursive;
   }
 
   h1 {

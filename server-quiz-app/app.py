@@ -32,6 +32,16 @@ def get_q():
 
     return q_a
 
+@app.route('/api/get_right_answ', methods=['GET'])
+def get_right_answ():
+    data = DB.rightanswers.find()
+    q_a={"q":[], "a":[]}
+    for x in data:
+        q_a["q"].append(x['q'])
+        q_a["a"].append(x["a"])
+
+    return q_a
+
 @app.route('/api/get_answ', methods=['GET'])
 def get_answ():
     answers = DB.Answers.find()
