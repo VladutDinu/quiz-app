@@ -1,6 +1,14 @@
 <script>
   export let name;
-  const url="http://localhost:8081/api/register_answ"
+  const url="http://localhost:8081/"
+  const q_a = async () => {
+    const response = await fetch(url+"api/get_q");
+    const json = await response.json();
+    return json;
+  }
+
+  var q_A = q_a();
+  console.log(qA);
   let firstIncAnswer = "";
   let firstName = ""
   let lastName = ""
@@ -11,7 +19,7 @@
   let q5 = true;
   const send_answ = (qA) => {
 	var xhr = new XMLHttpRequest();
-	xhr.open("POST", url, true);
+	xhr.open("POST", url+"api/register_answ", true);
 	xhr.setRequestHeader('Content-Type', 'application/json');
 	xhr.send(JSON.stringify(qA));
   }
@@ -46,10 +54,12 @@
 		firstName: firstName,
 		lastName: lastName
 	}
+  console.log(qA[1])
 	//console.log(qA);
 	send_answ(qA);
 	//console.log(firstIncAnswer);
   };
+
 </script> 
 
 <main>
@@ -106,151 +116,37 @@
         Raspunsul oferit nu este corect, va rugam sa revizuiti intrebarea.
       </p>
     {/if}
+  </div> 
+  
+  {#await q_A}
+	<p>...waiting</p>
+  {:then data}
+    {#each Array(data.q.length) as _,i }
+    <div class="container" id="q2">
+      <h3>{data.q[i]}</h3>
+      <ul>
+        {#each Array(data.a[i].length) as _,j }
+        
+          <li>
+            <input type="radio" id="{(j+1).toString().repeat(i+2).toString()}-option" name="selector{(j+1).toString().repeat(i+2).toString()}" />
+            <label for="{(j+1).toString().repeat(i+2).toString()}-option">{data.a[i][j]} {(j+1).toString().repeat(i+2).toString()}-option} selector{(j+1).toString().repeat(i+2).toString()}</label>
+    
+            <div class="check1"><div class="inside" /></div>
+          </li>
+          {/each}
+        </ul>
+        {#if !q1}
+        <p class="incorrect">
+          Raspunsul oferit nu este corect, va rugam sa revizuiti intrebarea.
+        </p>
+      {/if}
   </div>
+    {/each}
+  {:catch error}
+    <p style="color: red">{error.message}</p>
+  {/await}
 
-  <div class="container" id="q2">
-    <h3>2. Un MUX 4:1 reprezinta un circuit cu:</h3>
-
-    <ul>
-      <li>
-        <input type="radio" id="11-option" name="selector11" />
-        <label for="11-option">1 intrare si 4 iesiri</label>
-
-        <div class="check1" />
-      </li>
-
-      <li>
-        <input type="radio" id="22-option" name="selector11" />
-        <label for="22-option">4 intrari si 1 iesire</label>
-
-        <div class="check1"><div class="inside" /></div>
-      </li>
-    </ul>
-    {#if !q2}
-      <p class="incorrect">
-        Raspunsul oferit nu este corect, va rugam sa revizuiti intrebarea.
-      </p>
-    {/if}
-  </div>
-
-  <div class="container" id="q3">
-    <h3>3. Ce operatie logica indeplineste poarta XOR?</h3>
-
-    <ul>
-      <li>
-        <input type="radio" id="111-option" name="selector111" />
-        <label for="111-option">Suma</label>
-
-        <div class="check1" />
-      </li>
-
-      <li>
-        <input type="radio" id="222-option" name="selector111" />
-        <label for="222-option">Scadere</label>
-
-        <div class="check1"><div class="inside" /></div>
-      </li>
-
-      <li>
-        <input type="radio" id="333-option" name="selector111" />
-        <label for="333-option">Inmultimre</label>
-
-        <div class="check1"><div class="inside" /></div>
-      </li>
-
-      <li>
-        <input type="radio" id="444-option" name="selector111" />
-        <label for="444-option">Suma modulo 2</label>
-
-        <div class="check1"><div class="inside" /></div>
-      </li>
-    </ul>
-    {#if !q3}
-      <p class="incorrect">
-        Raspunsul oferit nu este corect, va rugam sa revizuiti intrebarea.
-      </p>
-    {/if}
-  </div>
-
-  <div class="container" id="q4">
-    <h3>
-      4. Selectati care dintre urmatoarele variante reprezinta functia logica a
-      portii OR?
-    </h3>
-
-    <ul>
-      <li>
-        <input type="radio" id="1111-option" name="selector1111" />
-        <label for="1111-option">a & b</label>
-
-        <div class="check1" />
-      </li>
-
-      <li>
-        <input type="radio" id="2222-option" name="selector1111" />
-        <label for="2222-option">a | b</label>
-
-        <div class="check1"><div class="inside" /></div>
-      </li>
-
-      <li>
-        <input type="radio" id="3333-option" name="selector1111" />
-        <label for="3333-option">a ^ b</label>
-
-        <div class="check1"><div class="inside" /></div>
-      </li>
-
-      <li>
-        <input type="radio" id="4444-option" name="selector1111" />
-        <label for="4444-option">a % b</label>
-
-        <div class="check1"><div class="inside" /></div>
-      </li>
-    </ul>
-    {#if !q4}
-      <p class="incorrect">
-        Raspunsul oferit nu este corect, va rugam sa revizuiti intrebarea.
-      </p>
-    {/if}
-  </div>
-  <div class="container" id="q5">
-    <h3>5. Ce varianta de mai jos reprezinta operatia corecta a portii AND?</h3>
-
-    <ul>
-      <li>
-        <input type="radio" id="11111-option" name="selector11111" />
-        <label for="11111-option">1 & 0 = 1</label>
-
-        <div class="check1" />
-      </li>
-
-      <li>
-        <input type="radio" id="22222-option" name="selector11111" />
-        <label for="22222-option">1 | 1 = 1</label>
-
-        <div class="check1"><div class="inside" /></div>
-      </li>
-
-      <li>
-        <input type="radio" id="33333-option" name="selector11111" />
-        <label for="33333-option">1 & 1 = 1</label>
-
-        <div class="check1"><div class="inside" /></div>
-      </li>
-
-      <li>
-        <input type="radio" id="44444-option" name="selector11111" />
-        <label for="44444-option">0 & 0 = 1</label>
-
-        <div class="check1"><div class="inside" /></div>
-      </li>
-    </ul>
-    {#if !q5}
-      <p class="incorrect">
-        Raspunsul oferit nu este corect, va rugam sa revizuiti intrebarea.
-      </p>
-    {/if}
-  </div>
+  
   <button on:click={check_answers}>
     <a href="#{firstIncAnswer}" class="buttons flatbutt orange">Submit quiz</a>
   </button>

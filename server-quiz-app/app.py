@@ -1,7 +1,6 @@
 import ssl
 from flask import Flask, request
 from flask_cors import CORS
-from httpx import options
 from pymongo import MongoClient
 import pymongo
 
@@ -22,6 +21,17 @@ def register_answ():
     else:
         return "Request object is not JSON"
     return "OK"
+
+@app.route('/api/get_q', methods=['GET'])
+def get_q():
+    data = DB.questions.find()
+    q_a={"q":[], "a":[]}
+    for x in data:
+        q_a["q"].append(x['q'])
+        print(x["a"])
+        q_a["a"].append(x["a"])
+
+    return q_a
 
 @app.route('/api/get_answ', methods=['GET'])
 def get_answ():
