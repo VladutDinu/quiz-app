@@ -28,7 +28,6 @@ def get_q():
     q_a={"q":[], "a":[]}
     for x in data:
         q_a["q"].append(x['q'])
-        print(x["a"])
         q_a["a"].append(x["a"])
 
     return q_a

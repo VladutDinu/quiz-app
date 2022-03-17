@@ -1,5 +1,6 @@
 <script>
   export let name;
+  import WrongAnswers from "./WrongAnswers.svelte";
   const url="http://localhost:8081/"
   const q_a = async () => {
     const response = await fetch(url+"api/get_q");
@@ -8,7 +9,6 @@
   }
 
   var q_A = q_a();
-  console.log(qA);
   let firstIncAnswer = "";
   let firstName = ""
   let lastName = ""
@@ -17,6 +17,7 @@
   let q3 = true;
   let q4 = true;
   let q5 = true;
+  var arr_q = [q1,q2,q3,q4,q5];
   const send_answ = (qA) => {
 	var xhr = new XMLHttpRequest();
 	xhr.open("POST", url+"api/register_answ", true);
@@ -54,11 +55,15 @@
 		firstName: firstName,
 		lastName: lastName
 	}
-  console.log(qA[1])
+  arr_q = [q1,q2,q3,q4,q5];
 	//console.log(qA);
 	send_answ(qA);
 	//console.log(firstIncAnswer);
+  console.log(qA);
+  console.log(arr_q);
   };
+  
+ 
 
 </script> 
 
@@ -117,30 +122,30 @@
       </p>
     {/if}
   </div> 
+
+  
   
   {#await q_A}
 	<p>...waiting</p>
   {:then data}
     {#each Array(data.q.length) as _,i }
-    <div class="container" id="q2">
+    <div class="container" id="q{i+2}">
       <h3>{data.q[i]}</h3>
       <ul>
         {#each Array(data.a[i].length) as _,j }
-        
           <li>
-            <input type="radio" id="{(j+1).toString().repeat(i+2).toString()}-option" name="selector{(j+1).toString().repeat(i+2).toString()}" />
-            <label for="{(j+1).toString().repeat(i+2).toString()}-option">{data.a[i][j]} {(j+1).toString().repeat(i+2).toString()}-option} selector{(j+1).toString().repeat(i+2).toString()}</label>
-    
-            <div class="check1"><div class="inside" /></div>
+            <input type="radio" id="{(j+1).toString().repeat(i+2)}-option" name="selector{(2).toString().repeat(i+1)}" />
+               <label for="{(j+1).toString().repeat(i+2)}-option">{data.a[i][j]}</label>
+            <div class="check1"></div>
           </li>
           {/each}
         </ul>
-        {#if !q1}
+      {#if !arr_q[i+1]}
         <p class="incorrect">
           Raspunsul oferit nu este corect, va rugam sa revizuiti intrebarea.
         </p>
       {/if}
-  </div>
+   </div>
     {/each}
   {:catch error}
     <p style="color: red">{error.message}</p>
@@ -150,6 +155,8 @@
   <button on:click={check_answers}>
     <a href="#{firstIncAnswer}" class="buttons flatbutt orange">Submit quiz</a>
   </button>
+
+  <WrongAnswers bind:qa={q_A}></WrongAnswers>
 </main>
 
 <style>
@@ -182,7 +189,6 @@
     font-size: 2em;
     padding: 15px;
   }
-
   button {
     background-color: transparent;
     background-repeat: no-repeat;
@@ -191,7 +197,6 @@
     overflow: hidden;
     outline: none;
   }
-
   .buttons {
     margin: 20px 10px 20px 10px;
     display: block;
@@ -201,25 +206,21 @@
     width: 300px;
     margin: auto;
   }
-
   a.flatbutt {
     background: #e26c3d;
     border-radius: 3px;
     color: rgb(0, 0, 0);
     font-size: 90%;
   }
-
   .orange {
     background: #f39c12;
   }
-
   h3 {
     color: #e2f8a5;
     text-transform: uppercase;
     font-size: 2em;
     font-weight: bold;
   }
-
   img {
     margin-top: 5px;
     margin-left: 15px;
@@ -231,7 +232,6 @@
     width: 200px;
     height: 100px;
   }
-
   .container {
     display: block;
     position: relative;
@@ -250,16 +250,13 @@
   .container .numelabel{
 	  color: aliceblue;
 	  font-size: 1.65rem;
-
   }
-
   .container ul {
     list-style: none;
     margin: 0;
     padding: 0;
     overflow: auto;
   }
-
   ul li {
     color: #aaaaaa;
     display: block;
@@ -271,12 +268,10 @@
     height: auto;
     border-width: 0.2rem;
   }
-
   ul li input[type="radio"] {
     position: absolute;
     visibility: hidden;
   }
-
   ul li label {
     display: block;
     position: relative;
@@ -287,11 +282,9 @@
     z-index: 9;
     cursor: pointer;
   }
-
   ul li:hover label {
     color: #0dff92;
   }
-
   ul li .check {
     display: block;
     position: absolute;
@@ -305,7 +298,6 @@
     transition: border 0.25s linear;
     -webkit-transition: border 0.25s linear;
   }
-
   ul li .check1 {
     display: block;
     position: absolute;
@@ -313,17 +305,15 @@
     border-radius: 100%;
     height: 25px;
     width: 25px;
-    top: 33px;
-    left: 20px;
+    top: 25px;
+    left: 25px;
     z-index: 5;
     transition: border 0.25s linear;
     -webkit-transition: border 0.25s linear;
   }
-
   ul li:hover .check {
     border: 5px solid #0dff92;
   }
-
   ul li .check::before {
     display: block;
     position: absolute;
@@ -335,19 +325,15 @@
     left: 5px;
     margin: auto;
   }
-
   input[type="radio"]:checked ~ .check {
     border: 5px solid #0dff92;
   }
-
   input[type="radio"]:checked ~ .check::before {
     background: #0dff92;
   }
-
   ul li:hover .check1 {
     border: 5px solid #0dff92;
   }
-
   ul li .check1::before {
     display: block;
     position: absolute;
@@ -359,19 +345,15 @@
     left: 5px;
     margin: auto;
   }
-
   input[type="radio"]:checked ~ .check1 {
     border: 5px solid #0dff92;
   }
-
   input[type="radio"]:checked ~ .check1::before {
     background: #0dff92;
   }
-
   input[type="radio"]:checked ~ label {
     color: #0dff92;
   }
-
   @media (min-width: 840px) {
     main {
       max-width: none;
