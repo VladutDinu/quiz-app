@@ -16,7 +16,10 @@
   var q_A = q_a();
 
   let firstName = ""
+  var firstNameComplete = true;
   let lastName = ""
+  var lastNameComplete = true;
+  var href_stuff = "";
   let q1 = true;
   let q2 = true;
   let q3 = true;
@@ -36,7 +39,18 @@
     q3 = document.getElementById("444-option").checked;
     q4 = document.getElementById("2222-option").checked;
     q5 = document.getElementById("33333-option").checked;
-	
+
+    if(firstName != undefined){
+      if(href_stuff === "")
+        href_stuff = "firstName"
+      firstNameComplete = false;
+    }
+    if(lastName != undefined){
+      if(href_stuff === "")
+        href_stuff = "lastName"
+      lastNameComplete = false;
+    }
+      
 	const qA={
 		q1: q1,
 		q2: q2,
@@ -48,11 +62,13 @@
 	}
   arr_q = [q1,q2,q3,q4,q5];
 	//console.log(qA);
-	send_answ(qA);
+	if(firstName && lastName){
+    send_answ(qA);
+    console.log(qA);
+    console.log(arr_q);
+    showModal(arr_q, url);
+  }
 	//console.log(firstIncAnswer);
-  console.log(qA);
-  console.log(arr_q);
-  showModal(arr_q, url);
   };
   
  
@@ -66,6 +82,11 @@
 	<input type="text" class="nume" id="firstName"  bind:value={firstName} placeholder="Nume"/>
 	<label for="prenume" class="numelabel">Prenume</label>
 	<input type="text" class="nume" id="lastName"  bind:value={lastName} placeholder="Prenume"/>
+  {#if !lastNameComplete | !firstNameComplete}
+    <p class="incorrect">
+      Va rog sa va completati numele.
+    </p>
+  {/if}
   </div>
   <div class="container" id="q1">
     <h3>1. Care dintre figurile de mai jos este o poarta AND?</h3>
@@ -108,15 +129,8 @@
         <div class="check"><div class="inside" /></div>
       </li>
     </ul>
-    {#if !q1}
-      <p class="incorrect">
-        Raspunsul oferit nu este corect, va rugam sa revizuiti intrebarea.
-      </p>
-    {/if}
   </div> 
 
-  
-  
   {#await q_A}
 	<p>...waiting</p>
   {:then data}
@@ -132,11 +146,6 @@
           </li>
           {/each}
         </ul>
-      <!-- {#if !arr_q[i+1]}
-        <p class="incorrect">
-          Raspunsul oferit nu este corect, va rugam sa revizuiti intrebarea.
-        </p>
-      {/if} -->
    </div>
     {/each}
   {:catch error}
@@ -146,16 +155,23 @@
   
   <button on:click={check_answers}>
     <!-- svelte-ignore a11y-invalid-attribute -->
-    <a href="#" class="buttons flatbutt orange">Submit quiz</a>
+    <a href="#{href_stuff}" class="buttons flatbutt orange">Submit quiz</a>
   </button>
-  <Modal
-  show={$modal}
-  styleBg={{ backgroundColor: 'rgba(255, 255, 255, 0.85)' }}
-  styleWindow={{ boxShadow: '0 2px 5px 0 rgba(0, 0, 0, 0.15)' }}
->
-  <button on:click={showModal}>Show modal</button>
-</Modal>
-  <WrongAnswers bind:qa={q_A} ></WrongAnswers>
+
+  <div class="hidden">
+      <Modal
+    show={$modal}
+    styleBg={{ backgroundColor: 'rgba(255, 255, 255, 0.85)' }}
+    styleWindow={{ boxShadow: '0 2px 5px 0 rgba(0, 0, 0, 0.15)' }}
+    >
+    </Modal>
+    <button on:click={showModal}>Show modal</button>
+  </div>
+
+  <div class="hidden">
+    <WrongAnswers  bind:qa={q_A} ></WrongAnswers>
+  </div>
+ 
 </main>
 
 <style>
@@ -164,15 +180,20 @@
     padding: 1em;
     max-width: 240px;
     margin: 0 auto;
-    background-color: rgb(53, 53, 53);
+    background-color: #003049;
     font-family: 'Yeseva One', cursive;
+  }
+
+  .hidden{
+    visibility: hidden;
+    display: block;
   }
 
   h1 {
     display: block;
     position: relative;
     margin: 30px auto;
-    color: #ff3e00;
+    color: #f77f00;
     text-transform: uppercase;
     font-size: 4em;
     font-weight: 100;
@@ -183,7 +204,7 @@
   }
 
   .incorrect {
-    color: #ff0000;
+    color: #d62828;
     position: relative;
     font-weight: 300;
     font-size: 2em;
@@ -194,6 +215,8 @@
     background-repeat: no-repeat;
     border: none;
     cursor: pointer;
+    font-size: 2rem;
+    height: auto;
     overflow: hidden;
     outline: none;
   }
@@ -201,9 +224,8 @@
     margin: 20px 10px 20px 10px;
     display: block;
     text-align: center;
-    font-weight: 500;
     padding: 12px 20px 12px 20px;
-    width: 300px;
+    width: 420px;
     margin: auto;
   }
   a.flatbutt {
@@ -216,7 +238,7 @@
     background: #f39c12;
   }
   h3 {
-    color: #e2f8a5;
+    color: #eae2b7;
     text-transform: uppercase;
     font-size: 2em;
     font-weight: bold;
@@ -248,7 +270,7 @@
      height: 70px;
   }
   .container .numelabel{
-	  color: aliceblue;
+	  color: #eae2b7;
 	  font-size: 1.65rem;
   }
   .container ul {
@@ -258,7 +280,7 @@
     overflow: auto;
   }
   ul li {
-    color: #aaaaaa;
+    color: #eae2b7;
     display: block;
     position: relative;
     float: left;
